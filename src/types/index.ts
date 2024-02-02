@@ -24,3 +24,14 @@ export type ApiListResponse<Type> = {
 
 /// Server request methods
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
+
+/// Content data for rendering inside the modal window
+export interface IModalData {
+	content: HTMLElement;
+}
+
+/// Form validity handler data
+export interface IFormState {
+	valid: boolean;
+	errors: string[];
+}
