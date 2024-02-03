@@ -35,3 +35,50 @@ export interface IFormState {
 	valid: boolean;
 	errors: string[];
 }
+
+/// Product Data
+export interface IProduct {
+	id: string;
+	title: string;
+	price: number | null;
+	description: string;
+	category: string;
+	image: string;
+}
+
+/// Application Status
+export interface IAppState {
+	catalog: IProduct[];
+	basket: IProduct[];
+	preview: string | null;
+	delivery: IDeliveryForm | null;
+	contact: IContactForm | null;
+	order: IOrder | null;
+}
+
+/// Delivery Information
+export interface IDeliveryForm {
+	payment: string;
+	address: string;
+}
+
+/// Contact Information
+export interface IContactForm {
+	email: string;
+	phone: string;
+}
+
+/// Overall Order Data
+export interface IOrder extends IDeliveryForm, IContactForm {
+	total: number;
+	items: string[];
+}
+
+/// Server Response Data for the Order
+export interface IOrderResult {
+	id: string;
+	total: number;
+}
+
+/// Form Errors
+export type FormErrors = Partial<Record<keyof IOrder, string>>;
