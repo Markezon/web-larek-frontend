@@ -1,9 +1,22 @@
 import './scss/styles.scss';
 
+import { LarekAPI } from './components/LarekAPI';
+import { API_URL, CDN_URL, PaymentMethods } from './utils/constants';
+import { EventEmitter } from './components/base/events';
+import { AppState, CatalogChangeEvent, Product } from './components/AppData';
+import { Page } from './components/Page';
+import { cloneTemplate, createElement, ensureElement } from './utils/utils';
+import { Modal } from './components/common/Modal';
+import { IContactForm, IDeliveryForm, IOrder } from './types';
+import { Card } from './components/Card';
+import { Basket } from './components/Basket';
+import { DeliveryForm, ContactForm } from './components/Order';
+import { Success } from './components/Success';
+// Создание объектов для управления событиями и API
 const events = new EventEmitter();
 const api = new LarekAPI(CDN_URL, API_URL);
 
-// Шаблоны верстки
+// Шаблоны верстки элементов страницы
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
 const cardBasketTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
@@ -12,7 +25,7 @@ const deliveryTemplate = ensureElement<HTMLTemplateElement>('#order');
 const contactTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 
-// Модель данных приложения
+// Создание основных компонентов приложения
 const appData = new AppState({}, events);
 
 // Глобальные контейнеры
@@ -24,7 +37,9 @@ const delivery = new DeliveryForm(cloneTemplate(deliveryTemplate), events, {
 });
 const contact = new ContactForm(cloneTemplate(contactTemplate), events);
 
-// Обновления каталога
+///Обработка событий///
+
+// Обновления каталога товаров
 events.on<CatalogChangeEvent>('items:changed', () => {
 	page.catalog = appData.catalog.map((item) => {
 		const card = new Card(cloneTemplate(cardCatalogTemplate), {
