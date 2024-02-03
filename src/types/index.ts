@@ -25,6 +25,13 @@ export type ApiListResponse<Type> = {
 /// Server request methods
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
+/// Description of methods for the API
+export interface ILarekAPI {
+	getProductList: () => Promise<IProduct[]>;
+	getProductItem: (id: string) => Promise<IProduct>;
+	orderProducts: (order: IOrder) => Promise<IOrderResult>;
+}
+
 /// Content data for rendering inside the modal window
 export interface IModalData {
 	content: HTMLElement;
