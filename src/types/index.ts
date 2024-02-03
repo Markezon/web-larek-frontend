@@ -82,3 +82,10 @@ export interface IOrderResult {
 
 /// Form Errors
 export type FormErrors = Partial<Record<keyof IOrder, string>>;
+
+/// Data for displaying the main page
+
+export interface IPage {
+	counter: number;
+	catalog: HTMLElement[];
+}
