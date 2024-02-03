@@ -79,3 +79,164 @@ events.on('preview:changed', (item: Product) => {
 		}),
 	});
 });
+
+// Переключение/добавление/удаление товара и обновление счетчика
+events.on('product:toggle', (item: Product) => {
+	//modal.close();
+	if (appData.basket.indexOf(item) < 0) {
+		events.emit('product:add', item);
+	} else {
+		events.emit('product:delete', item);
+	}
+});
+
+events.on('product:add', (item: Product) => {
+	appData.addToBasket(item);
+});
+
+events.on('product:delete', (item: Product) => appData.removeFromBasket(item));
+
+// Обновление списка товаров в корзине и общей стоимости
+events.on('basket:changed', (items: Product[]) => {
+	basket.items = items.map((item, index) => {
+		const card = new Card(cloneTemplate(cardBasketTemplate), {
+			onClick: () => {
+				events.emit('product:delete', item);
+			},
+		});
+		return card.render({
+			index: (index + 1).toString(),
+			title: item.title,
+			price: item.price,
+		});
+	});
+	const total = items.reduce((total, item) => total + item.price, 0);
+	basket.total = total;
+	appData.order.total = total;
+	basket.toggleButton(total === 0);
+});
+
+events.on('counter:changed', (item: string[]) => {
+	page.counter = appData.basket.length;
+});
+
+// Открытие корзины
+events.on('basket:open', () => {
+	modal.render({
+		content: basket.render({}),
+	});
+});
+
+//Открытие формы доставки
+events.on('order:open', () => {
+	modal.render({
+		content: delivery.render({
+			payment: '',
+			address: '',
+			valid: false,
+			errors: [],
+		}),
+	});
+	appData.order.items = appData.basket.map((item) => item.id);
+});
+
+// Смена способа оплаты
+events.on('payment:toggle', (target: HTMLElement) => {
+	if (!target.classList.contains('button_alt-active')) {
+		delivery.toggleButtons(target);
+		appData.order.payment = PaymentMethods[target.getAttribute('name')];
+		console.log(appData.order);
+	}
+});
+
+// Изменение состояния валидации форм
+events.on('formErrors:change', (errors: Partial<IOrder>) => {
+	const { payment, address, email, phone } = errors;
+	delivery.valid = !payment && !address;
+	contact.valid = !email && !phone;
+	delivery.errors = Object.values({ payment, address })
+		.filter((i) => !!i)
+		.join('; ');
+	contact.errors = Object.values({ phone, email })
+		.filter((i) => !!i)
+		.join('; ');
+});
+
+// Изменение полей доставки
+events.on(
+	/^order\..*:change/,
+	(data: { field: keyof IDeliveryForm; value: string }) => {
+		appData.setDeliveryField(data.field, data.value);
+	}
+);
+
+// Изменение полей контактов
+events.on(
+	/^contacts\..*:change/,
+	(data: { field: keyof IContactForm; value: string }) => {
+		appData.setContactField(data.field, data.value);
+	}
+);
+
+// Событие заполненности формы доставки
+events.on('delivery:ready', () => {
+	delivery.valid = true;
+});
+
+// Событие заполненности формы контактов
+events.on('contact:ready', () => {
+	contact.valid = true;
+});
+
+// Событие перехода к форме контактов
+events.on('order:submit', () => {
+	modal.render({
+		content: contact.render({
+			email: '',
+			phone: '',
+			valid: false,
+			errors: [],
+		}),
+	});
+});
+
+// Оформление заказа
+events.on('contacts:submit', () => {
+	api
+		.orderProducts(appData.order)
+		.then((result) => {
+			appData.clearBasket();
+			appData.clearOrder();
+			const success = new Success(cloneTemplate(successTemplate), {
+				onClick: () => {
+					modal.close();
+				},
+			});
+			success.total = result.total.toString();
+
+			modal.render({
+				content: success.render({}),
+			});
+		})
+		.catch((err) => {
+			console.error(err);
+		});
+});
+
+// Модальное окно открыто
+events.on('modal:open', () => {
+	page.locked = true;
+});
+
+// Модальное окно закрыто
+events.on('modal:close', () => {
+	page.locked = false;
+});
+
+// Получение и отображение списка продуктов при загрузке страницы
+api
+	.getProductList()
+	.then(appData.setCatalog.bind(appData))
+	.catch((err) => {
+		console.log(err);
+	});
