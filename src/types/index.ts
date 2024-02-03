@@ -84,8 +84,34 @@ export interface IOrderResult {
 export type FormErrors = Partial<Record<keyof IOrder, string>>;
 
 /// Data for displaying the main page
-
 export interface IPage {
 	counter: number;
 	catalog: HTMLElement[];
+}
+
+/// Data for displaying the card
+export interface ICard extends IProduct {
+	index?: string;
+	buttonTitle?: string;
+}
+
+/// Data for displaying a successful order
+export interface ISuccess {
+	total: number;
+}
+
+/// Actions passed to the constructor
+export interface IActions {
+	onClick: (event: MouseEvent) => void;
+}
+
+/// Actions passed to the constructor of a successful order
+export interface ISuccessActions {
+	onClick: () => void;
+}
+
+/// Data for displaying the shopping cart
+export interface IBasketView {
+	items: HTMLElement[];
+	total: number;
 }
