@@ -94,8 +94,12 @@ export class AppState extends Model<IAppState> {
 
 	validateDelivery() {
 		const errors: typeof this.formErrors = {};
+		const deliveryRegex = /^[а-яА-ЯёЁa-zA-Z0-9\s\/.,-]{10,}$/;
 		if (!this.order.address) {
 			errors.address = 'Необходимо указать адрес';
+		} else if (!deliveryRegex.test(this.order.address)) {
+			errors.address =
+				'Адрес должен содержать только буквы, цифры, пробелы, точки, запятые и "/", состоять как минимум из 10 символов';
 		}
 		this.formErrors = errors;
 		this.events.emit('formErrors:change', this.formErrors);
@@ -104,11 +108,23 @@ export class AppState extends Model<IAppState> {
 
 	validateContact() {
 		const errors: typeof this.formErrors = {};
+		const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+		const phoneRegex = /^\+7[0-9]{10}$/;
 		if (!this.order.email) {
 			errors.email = 'Необходимо указать email';
+		} else if (!emailRegex.test(this.order.email)) {
+			errors.email = 'Некорректный адрес электронной почты';
 		}
-		if (!this.order.phone) {
+		let phoneValue = this.order.phone;
+		if (phoneValue.startsWith('8')) {
+			phoneValue = '+7' + phoneValue.slice(1);
+		}
+		if (!phoneValue) {
 			errors.phone = 'Необходимо указать телефон';
+		} else if (!phoneRegex.test(phoneValue)) {
+			errors.phone = 'Некорректный формат номера телефона';
+		} else {
+			this.order.phone = phoneValue;
 		}
 		this.formErrors = errors;
 		this.events.emit('formErrors:change', this.formErrors);
