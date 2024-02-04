@@ -306,3 +306,165 @@ yarn build
   <ul>
     <li>set total - Устанавливает текст, отображаемый в элементе _totalElement. Используется для обновления информации о стоимости или других данных, связанных с успешным завершением операции.</li>
   </ul>
+
+<!-- типы данных -->
+<h2>Ключевые типы данных</h2>
+
+  <h2>Типы данных для базовых классов:</h2>
+
+  <h3>Общие методы события</h3>
+  <pre>
+export interface IEvents {
+    on&lt;T extends object&gt;(event: EventName, callback: (data: T) =&gt; void): void; // обработчик события
+    emit&lt;T extends object&gt;(event: string, data?: T): void; // инициатор события
+    trigger&lt;T extends object&gt;(event: string, context?: Partial&lt;T&gt;): (data: T) =&gt; void; // колбек триггер события
+}
+  </pre>
+
+  <h3>Данные ответа от сервера</h3>
+  <pre>
+export type ApiListResponse&lt;Type&gt; = {
+    total: number, // общая стоимость товаров
+    items: Type[] // список заказанных товаров
+};
+  </pre>
+
+  <h3>Методы запросов к серверу</h3>
+  <pre>
+export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
+  </pre>
+
+  <h2>Типы данных для общих компонентов:</h2>
+
+  <h3>Данные обработчика валидности формы</h3>
+  <pre>
+export interface IFormState {
+    valid: boolean; // валидность всей формы
+    errors: string[]; // ошибки валидации формы
+}
+  </pre>
+
+  <h3>Данные контента для отрисовки внутри модального окна</h3>
+  <pre>
+export interface IModalData {
+    content: HTMLElement; // контейнер, обрисовываемый в модальном окне
+}
+  </pre>
+
+  <h2>Остальные типы данных:</h2>
+
+  <h3>Товар</h3>
+  <pre>
+export interface IProduct {
+    id: string; // id товара
+    title: string; // имя товара
+    price: number | null; // цена товара
+    description: string; // описание товара
+    category: string; // категория товара
+    image: string; // изображение товара
+}
+  </pre>
+
+  <h3>Состояние приложения</h3>
+  <pre>
+export interface IAppState {
+    catalog: IProduct[]; // все товары в каталоге
+    basket: IProduct[]; // все id товаров в корзине
+    preview: string | null; // id товара в окне детального просмотра
+    order: IOrder | null; // данные о заказе
+}
+  </pre>
+
+  <h3>Данные доставки</h3>
+  <pre>
+export interface IDeliveryForm {
+    payment: string; // способ оплаты
+    address: string; // адрес доставки
+}
+  </pre>
+
+  <h3>Контактные данные</h3>
+  <pre>
+export interface IContactForm {
+    email: string; // электронная почта
+    phone: string; //
+}
+  </pre>
+
+  <h3>Данные всего заказа</h3>
+  <pre>
+export interface IOrder extends IDeliveryForm, IContactForm {
+    total: number; // общая сумма заказа
+    items: string[]; // id всех товаров в заказе
+}
+  </pre>
+
+  <h3>Данные ответа сервера на заказ</h3>
+  <pre>
+export interface IOrderResult {
+    id: string; // id заказа
+    total: number; // общая сумма заказа
+}
+  </pre>
+
+  <h3>Ошибки Форм</h3>
+  <pre>
+export type FormErrors = Partial&lt;Record&lt;keyof IOrder, string&gt;&gt;;
+  </pre>
+
+  <h3>Данные для отображения карточки</h3>
+  <pre>
+export interface ICard extends IProduct{
+    index?: string; // индекс товара в корзине(опционально)
+    buttonTitle? : string; // textContent для кнопки покупки
+}
+  </pre>
+
+  <h3>Данные для отображения корзины</h3>
+  <pre>
+export interface IBasketView {
+    items: HTMLElement[]; // список карточек в корзине
+    total: number; // итоговая стоимость товаров в корзине
+}
+  </pre>
+
+  <h3>Данные для отображения главной страницы</h3>
+  <pre>
+export interface IPage{
+    counter: number; // значение счетчика корзины
+    catalog: HTMLElement[]; // список карточек в каталоге
+}
+  </pre>
+
+  <h3>Данные для отображения успешного заказа</h3>
+  <pre>
+export interface ISuccess {
+    total: number; // итоговая стоимость товара
+}
+  </pre>
+
+  <h3>Действия передаваемые в конструктор</h3>
+  <pre>
+export interface IActions {
+    onClick: (event: MouseEvent) =&gt; void; // действие нажатия мышки
+}
+  </pre>
+
+  <h3>Действия передаваемые в конструктор успешного заказа</h3>
+  <pre>
+export interface ISuccessActions {
+    onClick: () =&gt; void; // любое действие
+}
+  </pre>
+
+  <h2>Список событий:</h2>
+  <pre>
+items:changed // изменение продуктов в каталоге
+card:select // выбор карточки из каталога
+preview:changed // изменение окна детального просмотра
+product:toggle // переключение продукта в корзине
+product:add // добавление продукта в корзину
+product:delete // удаление продукта из корзины
+basket:changed // изменение корзины
+counter:changed // изменение счетчика корзины
+basket:open // открытие окна корзины
