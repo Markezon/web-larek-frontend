@@ -9,21 +9,12 @@ import {
 } from '../types';
 
 export type CatalogChangeEvent = {
-	catalog: Product[];
+	catalog: IProduct[];
 };
-
-export class Product extends Model<IProduct> {
-	id: string;
-	title: string;
-	price: number | null;
-	description: string;
-	category: string;
-	image: string;
-}
 
 export class AppState extends Model<IAppState> {
 	catalog: IProduct[];
-	basket: Product[] = [];
+	basket: IProduct[] = [];
 	order: IOrder = {
 		payment: 'online',
 		address: '',
@@ -56,19 +47,19 @@ export class AppState extends Model<IAppState> {
 		this.emitChanges('items:changed', { catalog: this.catalog });
 	}
 
-	setPreview(item: Product) {
+	setPreview(item: IProduct) {
 		this.preview = item.id;
 		this.emitChanges('preview:changed', item);
 	}
 
-	addToBasket(item: Product) {
+	addToBasket(item: IProduct) {
 		if (this.basket.indexOf(item) < 0) {
 			this.basket.push(item);
 			this.updateBasket();
 		}
 	}
 
-	removeFromBasket(item: Product) {
+	removeFromBasket(item: IProduct) {
 		this.basket = this.basket.filter((it) => it != item);
 		this.updateBasket();
 	}

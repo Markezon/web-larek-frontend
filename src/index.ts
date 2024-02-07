@@ -3,11 +3,11 @@ import './scss/styles.scss';
 import { LarekAPI } from './components/LarekAPI';
 import { API_URL, CDN_URL, PaymentMethods } from './utils/constants';
 import { EventEmitter } from './components/base/events';
-import { AppState, CatalogChangeEvent, Product } from './components/AppData';
+import { AppState, CatalogChangeEvent } from './components/AppData';
 import { Page } from './components/Page';
 import { cloneTemplate, createElement, ensureElement } from './utils/utils';
 import { Modal } from './components/common/Modal';
-import { IContactForm, IDeliveryForm, IOrder } from './types';
+import { IContactForm, IDeliveryForm, IOrder, IProduct } from './types';
 import { Card } from './components/Card';
 import { Basket } from './components/Basket';
 import { DeliveryForm, ContactForm } from './components/Order';
@@ -55,11 +55,11 @@ events.on<CatalogChangeEvent>('items:changed', () => {
 });
 
 // Открытие товара
-events.on('card:select', (item: Product) => {
+events.on('card:select', (item: IProduct) => {
 	appData.setPreview(item);
 });
 
-events.on('preview:changed', (item: Product) => {
+events.on('preview:changed', (item: IProduct) => {
 	const card = new Card(cloneTemplate(cardPreviewTemplate), {
 		onClick: () => {
 			events.emit('product:toggle', item);
@@ -81,7 +81,7 @@ events.on('preview:changed', (item: Product) => {
 });
 
 // Переключение/добавление/удаление товара и обновление счетчика
-events.on('product:toggle', (item: Product) => {
+events.on('product:toggle', (item: IProduct) => {
 	//modal.close();
 	if (appData.basket.indexOf(item) < 0) {
 		events.emit('product:add', item);
@@ -90,14 +90,14 @@ events.on('product:toggle', (item: Product) => {
 	}
 });
 
-events.on('product:add', (item: Product) => {
+events.on('product:add', (item: IProduct) => {
 	appData.addToBasket(item);
 });
 
-events.on('product:delete', (item: Product) => appData.removeFromBasket(item));
+events.on('product:delete', (item: IProduct) => appData.removeFromBasket(item));
 
 // Обновление списка товаров в корзине и общей стоимости
-events.on('basket:changed', (items: Product[]) => {
+events.on('basket:changed', (items: IProduct[]) => {
 	basket.items = items.map((item, index) => {
 		const card = new Card(cloneTemplate(cardBasketTemplate), {
 			onClick: () => {
