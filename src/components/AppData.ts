@@ -22,7 +22,7 @@ export class Product extends Model<IProduct> {
 }
 
 export class AppState extends Model<IAppState> {
-	catalog: Product[];
+	catalog: IProduct[];
 	basket: Product[] = [];
 	order: IOrder = {
 		payment: 'online',
@@ -52,7 +52,7 @@ export class AppState extends Model<IAppState> {
 	}
 
 	setCatalog(items: IProduct[]) {
-		this.catalog = items.map((item) => new Product(item, this.events));
+		this.catalog = items;
 		this.emitChanges('items:changed', { catalog: this.catalog });
 	}
 
@@ -122,7 +122,8 @@ export class AppState extends Model<IAppState> {
 		if (!phoneValue) {
 			errors.phone = 'Необходимо указать телефон';
 		} else if (!phoneRegex.test(phoneValue)) {
-			errors.phone = 'Некорректный формат номера телефона';
+			errors.phone =
+				'Некорректный формат номера телефона, номер следует указывать в формате +7ХХХХХХХХХХ';
 		} else {
 			this.order.phone = phoneValue;
 		}
