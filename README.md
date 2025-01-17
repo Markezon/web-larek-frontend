@@ -1,4 +1,4 @@
-## The project can be viewed by following the [link]( [https://larek.khudorenko.com/](https://larek.khudorenko.com/))
+## The project can be viewed by following the [link]( https://larek.khudorenko.com/)
 
 # Project Work: "Web Larek"
 
