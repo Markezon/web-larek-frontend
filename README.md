@@ -1,6 +1,18 @@
-# Проектная работа "Веб-ларек"
+## The project can be viewed by following the [link]( [https://larek.khudorenko.com/](https://larek.khudorenko.com/))
 
-Стек: HTML, SCSS, TS, Webpack
+# Project Work: "Web Larek"
+
+  
+An online store for practicing TypeScript and OOP, where users can place orders.
+
+#### **Technologies Used:**
+
+-   HTML
+-   SCSS
+-   TypeScript (TS)
+-   Webpack
+-   Object-Oriented Programming (OOP)
+
 
 Структура проекта:
 
